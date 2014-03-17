@@ -1,9 +1,10 @@
-<apex:page standardcontroller="Account" extensions="DailyUserEventCtrl">
+<apex:page standardcontroller="Account" extensions="ReRenderTest">
 <apex:pageBlock >
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCz69ZuNkd9WfOdp4ATwC7oRu4Ioh_oUc&sensor=false"></script>
     <apex:pageBlock >
         <apex:form >
-            <apex:inputField value="{!account.SelectedDate__c}" showDatePicker="true" onchange=""/>            
+            <apex:actionFunction action="{!showMap}" name="showMapClick" reRender="gmap_section"/>
+            <apex:inputField value="{!account.SelectedDate__c}" showDatePicker="true" onchange="showMapClick()"/>          
         </apex:form>
     </apex:pageBlock>
     <apex:outputPanel id="gmap_section">
