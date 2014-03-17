@@ -9,7 +9,6 @@ public with sharing class ReRenderTest {
         this.acct= (Account) controller.getRecord();
         locations = getEventLocation();
         gAccLocation = getAccLocation();
-
     }   
     
     public String getAccLocation() {
@@ -44,13 +43,8 @@ public with sharing class ReRenderTest {
     
     public Pagereference showMap() {        
         locations = getEventLocation();
-        System.debug(locations);
         return null;
     }
-    
-    public Pagereference showAccountEvent() {
-    	locations = getEventLocation();
-    	return null;
-    }
+   
     
 }
