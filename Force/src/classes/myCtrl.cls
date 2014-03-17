@@ -19,4 +19,8 @@ public with sharing class myCtrl {
       public PageReference cancel() {
             return null;
       }
+      
+      public void Test() {
+      	System.debug('TEST');
+      }
 }
