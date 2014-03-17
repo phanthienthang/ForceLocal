@@ -1,0 +1,38 @@
+<apex:page standardController="Account" extensions="AccountHelper">
+
+  <apex:pageBlock title="Account">
+      <apex:outputField value="{!account.name}"/>
+  </apex:pageBlock>
+  <apex:pageBlock title="Related Contacts">
+      <apex:pageBlockTable value="{!contacts}" var="ct" rendered="true">
+          <apex:column value="{!ct.MailingStreet}"/>          
+      </apex:pageBlockTable>
+      <apex:pageMessage summary="Account has no contacts" severity="info" rendered="false" />
+  </apex:pageBlock>
+  <div id="gmap" style="width:100%; height:300px"></div>
+     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCz69ZuNkd9WfOdp4ATwC7oRu4Ioh_oUc&sensor=false"></script>
+     <script type="text/javascript">
+         (function(){
+             var contacts = {!contacts},
+                 map = new google.maps.Map(document.getElementById("gmap"), {zoom: 15}),
+                 geocoder = new google.maps.Geocoder();             
+             
+             for (var i = 0; i < contacts.length; i++) {
+                 geocoder.geocode( { 'address': contacts[i]}, function(results, status) {
+                 if (status == google.maps.GeocoderStatus.OK) {                     
+    
+                     new google.maps.Marker({
+                         map: map,
+                         position: results[0].geometry.location,
+                         title: contact[i]
+                     });
+                     
+                  } else {
+                      alert('Geocode was not successful for the following reason: ' + status);
+                  }
+             
+             }             
+          });       
+         }());
+     </script>
+</apex:page>

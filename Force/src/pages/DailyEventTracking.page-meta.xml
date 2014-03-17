@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>29.0</apiVersion>
+    <description>This page will be used to show the location of events of user on the google map in a specified day.</description>
+    <label>DailyEventTracking</label>
+</ApexPage>

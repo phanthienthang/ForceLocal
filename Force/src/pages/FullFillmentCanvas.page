@@ -1,0 +1,3 @@
+<apex:page standardController="Invoice__c">
+  <apex:canvasApp developerName="fathomless" parameters="{'orderId':'{!Invoice__c.OrderId__c}'}" width="100%"/>
+</apex:page>

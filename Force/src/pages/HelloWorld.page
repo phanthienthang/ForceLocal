@@ -1,0 +1,12 @@
+<apex:page controller="MyController" tabStyle="Account">
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Congratulations</h1>
+  <apex:form >
+      <apex:pageBlock >
+      <p><b>Hello {!$User.FirstName}!</b> You are viewing {!account.name} account</p>
+      <apex:commandButton action="{!save}" value="save"/>
+      </apex:pageBlock>
+  </apex:form>
+    
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

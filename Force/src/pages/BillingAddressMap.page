@@ -1,0 +1,40 @@
+<apex:page standardController="Account">
+    
+    <apex:pageBlock >
+        <apex:pageBlockSection title="Billing Address Information" columns="2" collapsible="false">       
+           
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Billing Address:</apex:outputLabel>
+                    <apex:outputLabel value="{!account.BillingStreet}" />                   
+                </apex:pageBlockSectionItem>
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel >Shipping Street:</apex:outputLabel>
+                    <apex:outputLabel value="{!account.ShippingStreet}" />               
+                </apex:pageBlockSectionItem>                
+               
+        </apex:pageBlockSection>
+     </apex:pageBlock>
+     <div id="gmap" style="width:100%; height:500px"></div>
+     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCz69ZuNkd9WfOdp4ATwC7oRu4Ioh_oUc&sensor=false"></script>
+     <script type="text/javascript">
+         (function(){
+             var address = "{{!Account.BillingCity}, {!Account.BillingState}, {!Account.BillingCountry},{!Account.BillingStreet}, {!Account.BillingPostalCode}}";             
+             var geocoder = new google.maps.Geocoder();
+             
+             geocoder.geocode( { 'address': address}, function(results, status) {
+             if (status == google.maps.GeocoderStatus.OK) {
+                 var map = new google.maps.Map(document.getElementById("gmap"), {center:results[0].geometry.location, zoom: 15});
+
+                 new google.maps.Marker({
+                     map: map,
+                     position: results[0].geometry.location,
+                     title: "{!account.name}: {!Account.BillingStreet}, {!Account.BillingCity}, {!Account.BillingCountry}"
+                 });
+              } else {
+                  alert('Geocode was not successful for the following reason: ' + status);
+              }
+          });       
+         }());
+     </script>
+</apex:page>

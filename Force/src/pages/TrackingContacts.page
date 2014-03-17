@@ -1,0 +1,36 @@
+<apex:page standardcontroller="Account" extensions="TrackingContacts">
+<div id="gmap" style="width:100%; height:500px"></div>
+ <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCz69ZuNkd9WfOdp4ATwC7oRu4Ioh_oUc&sensor=false"></script>
+ <script type="text/javascript">    
+    (function(){
+    
+        function Relocation(iAddress) {
+            var lAddress = iAddress;
+            geocoder.geocode({'address': lAddress}, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {                  
+                    new google.maps.Marker({ map: map, position: results[0].geometry.location, title: results[0].formatted_address, zoom: 10});
+                    map.setCenter(results[0].geometry.location);
+                } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                    setTimeout(function(){
+                        Relocation(lAddress, false);
+                    }, 100);
+                } else {
+                    alert('Contact: '+i+'Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+        var contacts = {!mTrackingJson};
+        
+        var geocoder = new google.maps.Geocoder();      
+        
+         //Create map with first user location as the root location
+        var map = new google.maps.Map(document.getElementById("gmap"), {zoom: 2, mapTypeId: google.maps.MapTypeId.ROADMAP});;
+        for (var i in contacts) {           
+            Relocation( contacts[i]);           
+        }
+        
+        
+            
+    }());    
+ </script>
+</apex:page>
