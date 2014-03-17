@@ -1,6 +1,7 @@
 public with sharing class RouteController {
 
     public String routeLink {get; set;}
+    public String route {get; set;}
 
     public RouteController() {        
         String baseUrl = ApexPages.currentPage().getHeaders().get('Referer'); 
