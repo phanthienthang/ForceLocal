@@ -1,0 +1,143 @@
+<apex:page standardcontroller="Account" extensions="DailyUserEventCtrl">
+<apex:pageBlock >
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDCz69ZuNkd9WfOdp4ATwC7oRu4Ioh_oUc&sensor=false"></script>
+    <apex:pageBlock >
+        <apex:form >
+            <apex:inputField value="{!account.SelectedDate__c}" showDatePicker="true" onchange=""/>            
+        </apex:form>
+    </apex:pageBlock>
+    <apex:outputPanel id="gmap_section">
+        <div id="gmap" style="width:100%; height:500px"></div>        
+        <script type="text/javascript">
+        (function(){
+            var directionsDisplay = new google.maps.DirectionsRenderer(),
+                directionsService = new google.maps.DirectionsService(),
+                geocoder = new google.maps.Geocoder(),
+                startPoint = null,
+                accAddress = {!gAccLocation};
+            
+            //Create map with first user location as the root location
+            var map = new google.maps.Map(document.getElementById("gmap"), {zoom: 8, mapTypeId: google.maps.MapTypeId.ROADMAP});
+            directionsDisplay.setMap(map);
+            
+            geocoder.geocode({'address': accAddress }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+                    startPoint = getGeo(results[0].geometry.location);
+                    //new google.maps.Marker({ map: map, position: results[0].geometry.location, title: "Current User Location: "+ results[0].formatted_address});
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(5);
+                } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                    setTimeout(function(){
+                        Relocation(lAddress);
+                    }, 200);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        
+            function Relocation(iAddress) {
+                var lAddress = iAddress;
+                geocoder.geocode({'address': lAddress}, function(results, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var showTime = function(){ alert('show time');};
+                        var marker = new google.maps.Marker({ map: map, position: results[0].geometry.location }); 
+                        var routeLink = buildRouteLink({end: getGeo(results[0].geometry.location), zoom: 10, endAddr: results[0].formatted_address});
+                        var sInfo = '<div style="width: 200px; height: 100px; font: 12 arial normal;" >'
+                                   +'<label style="font-weight:bold">Address:</label>'
+                                   +' '
+                                   +'<a onclick="showTime();" id="lRoute">'+results[0].formatted_address+'</a>'
+                                   +'</div>';
+                        
+                        var wInfo = new google.maps.InfoWindow({content: sInfo});
+                        
+                         
+                        google.maps.event.addListener(marker, 'click', function() {
+                            wInfo.open(map, marker);
+                        });
+                        google.maps.event.addListener(wInfo , 'domready', function() {
+                            document.getElementById("lRoute").onclick = function(){
+                                showRoute(routeLink);
+                            };
+                        });
+                        map.setCenter(results[0].geometry.location);
+                        map.setZoom(3);
+                        
+                    } else if (status == google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
+                        setTimeout(function(){
+                            Relocation(lAddress);
+                        }, 200);
+                    } else {
+                        alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+            }
+            
+            function showRoute(route) {
+                
+                var org = new google.maps.LatLng(route.startlat, route.startlng),
+                    des = new google.maps.LatLng(route.endlat, route.endlng);
+              
+                var request = {              
+                    origin: org,
+                    destination: des,
+                    travelMode: google.maps.TravelMode.DRIVING
+                };
+              
+                directionsService.route(request, function(response, status) {
+                    
+                    if (status == google.maps.DirectionsStatus.OK) {
+                      directionsDisplay.setDirections(response);
+                    } else {
+                        confirm("It's too far to show the route");
+                    }
+                });
+            }
+            
+            function getGeo(iGeo) {                
+                return {lng:iGeo.lng(),lat:iGeo.lat()};
+            }
+            
+            function buildRouteLink(iPoint) {
+               var endPoint = iPoint.end,
+                   endAddr  = iPoint.endAddr,
+                   zoom = iPoint.zoom;
+               //var routeLink = "https://maps.google.com/maps?saddr="+startPoint+"&daddr="+endPoint+"&z="+zoom; 
+               var routeLink = {
+                   startlng:startPoint.lng, 
+                   startlat:startPoint.lat,
+                   startAddr:accAddress, 
+                   endlng:endPoint.lng, 
+                   endlat:endPoint.lat, 
+                   endAddr:endAddr,
+                   };
+                             
+               return routeLink;
+            }
+            
+            function showMarker(iContacts) {
+                if (startPoint != null) {
+                    for (var i in iContacts) {
+                        Relocation(iContacts[i]);                                                 
+                    }
+                } else {
+                    setTimeout(function(){
+                        showMarker(iContacts);
+                    }, 200);
+                } 
+            }
+            
+            contacts = {!locations}
+                        
+            if (contacts.length === 0) {
+              confirm("User don't have any events.");  
+            } 
+            showMarker(contacts);
+            
+        }());   
+      
+    </script>
+    </apex:outputPanel>
+    
+    
+</apex:pageBlock>
+</apex:page>
